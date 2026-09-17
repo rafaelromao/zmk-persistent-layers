@@ -1,0 +1,19 @@
+# Kconfig functions split their arguments on commas, so the compatible (which
+# contains one) must go through a variable first. Same pattern as ZMK itself.
+DT_COMPAT_ZMK_PERSISTENT_LAYERS := zmk,persistent-layers
+
+config ZMK_PERSISTENT_LAYERS
+ bool "Remember a set of layers per endpoint, across reboots"
+ default $(dt_compat_enabled,$(DT_COMPAT_ZMK_PERSISTENT_LAYERS))
+ depends on !ZMK_SPLIT || ZMK_SPLIT_ROLE_CENTRAL
+ help
+   Treats the layers named by a zmk,persistent-layers node as modes that
+   belong to whichever host is selected. Turning one on is recorded against
+   the current endpoint and replayed whenever that endpoint comes back,
+   including after a restart.
+
+   Enabled automatically when a zmk,persistent-layers node is present in the
+   keymap. Only built on the central/unibody side, where layer state lives.
+
+   Saving needs CONFIG_SETTINGS, which ZMK implies for BLE builds. Without it
+   the per-endpoint switching still works, it is just forgotten on reboot.

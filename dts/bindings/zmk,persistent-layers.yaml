@@ -1,0 +1,30 @@
+# Copyright (c) 2026 Rafael Romão
+# SPDX-License-Identifier: MIT
+
+description: |
+    Persistent Layers
+
+    Records the state of the named layers against the selected endpoint and
+    restores it whenever that endpoint is selected again, including after a
+    reboot. Intended for mode layers -- an alternate OS, a different base --
+    held on by a locking toggle behavior.
+
+compatible: "zmk,persistent-layers"
+
+properties:
+    layers:
+        type: array
+        required: true
+        description: |
+            The layers this node owns. It never reads or writes any other
+            layer. Do not list a layer that something else already drives,
+            such as one managed by a host listener.
+
+    save-delay-ms:
+        type: int
+        default: 2000
+        description: |
+            How long to wait after a change before writing to flash, so a run
+            of toggles costs one write. Keep it short: a reboot inside the
+            window loses the change, which is the very thing this node exists
+            to prevent.
